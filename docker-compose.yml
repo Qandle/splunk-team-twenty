@@ -1,0 +1,40 @@
+services:
+  # os:
+  #   image: debian:latest
+  #   command: /bin/bash -c "apt-get update && apt-get install -y --no-install-recommends openssh-server vim && service ssh start && /bin/bash"
+  #   volumes:
+  #     - type: bind
+  #       source: ./debian
+  #       target: /root
+  os:
+    build:
+      dockerfile: Dockerfile
+    volumes:
+      - type: bind
+        source: ./debian
+        target: /root
+    ports:
+      - "7522:22"
+    environment:
+      - SSH_PASSWORD=${SSH_PASSWORD}
+      - SSH_USER=${SSH_USER}
+
+  splunk:
+    image: splunk/splunk:latest
+    ports:
+      - "8000:8000"
+      - "8088:8088"
+      - "8089:8089"
+      - "9997:9997"
+    volumes:
+      - type: bind
+        source: ./splunk/data
+        target: /opt/splunk/var/lib/splunk
+      - type: bind
+        source: ./splunk/logs
+        target: /opt/splunk/var/log/splunk
+    environment:
+      SPLUNK_START_ARGS: --accept-license
+      SPLUNK_PASSWORD: ${SPLUNK_PASSWORD}
+    # depends_on:
+    #   - os

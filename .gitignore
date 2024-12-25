@@ -1,0 +1,5 @@
+splunk
+debian
+.env
+.env.*
+!*.env.example
